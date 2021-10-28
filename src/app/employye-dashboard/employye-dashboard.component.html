@@ -4,9 +4,9 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <div class="d-flex">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Employee</button>
-        </div>
+      <div class="d-flex">
+        <button type="button" (click)="clickAddEmployee()" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Employee</button>
+      </div>
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -16,10 +16,6 @@
   
   <div class="container" id="main-container">
       
-  <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-  </button>
 
       <div class="row">
           <div *ngFor="let emp of employees" class="col-md-6 col-xl-3">
@@ -39,8 +35,8 @@
                   </ul>
                   <div class="card-body">
                       <div class="float-right btn-group btn-group-sm">
-                          <a href="#" class="btn btn-primary tooltips" data-target="#addEmployeeModel" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
-                          <a href="#" class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
+                          <a href="#" class="btn btn-primary tooltips" (click)="onEdit(emp)" data-bs-toggle="modal" data-bs-target="#exampleModal" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
+                          <a href="#" class="btn btn-secondary tooltips" (click)="onDelete(emp.id)" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
                       </div>
                       <ul class="social-links list-inline mb-0">
                           <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook-f"></i></a></li>
@@ -55,26 +51,6 @@
   
 
   <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  
-  <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -83,34 +59,35 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form >
+            <form [formGroup] = "formValue">
                 <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">First Name</label>
-                  <input type="text" class="form-control" formControlName="firstName" id="exampleInputEmail1" aria-describedby="emailHelp">
+                  <label for="exampleInputEmail1" class="form-label">Name</label>
+                  <input type="text" class="form-control" formControlName="name" id="exampleInputEmail1" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" formControlName="lastName" id="exampleInputEmail1" aria-describedby="emailHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Email ID</label>
+                    <label for="exampleInputEmail1" class="form-label">Email</label>
                     <input type="text" class="form-control" formControlName="email" id="exampleInputEmail1" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Mobile No.</label>
-                    <input type="text" class="form-control" formControlName="mobile" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Phone</label>
+                    <input type="text" class="form-control" formControlName="phone" id="exampleInputEmail1" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Salary</label>
-                    <input type="text" class="form-control" formControlName="salary" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Job Title</label>
+                    <input type="text" class="form-control" formControlName="jobTitle" id="exampleInputEmail1" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">IMG url</label>
+                    <input type="text" class="form-control" formControlName="imgUrl" id="exampleInputEmail1" aria-describedby="emailHelp">
                 </div>
               </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button"   class="btn btn-primary">Add</button>
-          <button type="button"  class="btn btn-primary">Update</button>
+
+              <div class="modal-footer">
+                <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button *ngIf="showAdd" (click)="postEmployee()" type="button" class="btn btn-primary">Add</button>
+                <button *ngIf="showUpdate" (click)="updateEmployee()" type="button" class="btn btn-primary">Update</button>
+              </div>
         </div>
       </div>
     </div>
-  </div>
+      

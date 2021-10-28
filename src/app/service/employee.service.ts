@@ -18,4 +18,17 @@ export class EmployeeService {
   public getEmployees(): Observable<Employee[]>{
     return  this.http.get<Employee[]>(`${this.apiServerUrl}/employees`);
   }
+
+  public postEmployee(emp : Employee): Observable<Employee>{
+    return this.http.post<Employee>(this.apiServerUrl+"/employees",emp);
+  }
+
+  public updateEmployee(emp : Employee): Observable<Employee>{
+    return this.http.put<Employee>(this.apiServerUrl+"/employees",emp, {responseType: 'text' as 'json'});
+  }
+
+  public deleteEmployee(id : Number): Observable<any>{
+    return this.http.delete<any>(this.apiServerUrl+"/employees/"+id, {responseType: 'text' as 'json'});
+  }
+
 }
