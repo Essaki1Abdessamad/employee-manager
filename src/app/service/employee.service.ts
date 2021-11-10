@@ -15,20 +15,20 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) { }
 
-  public getEmployees(): Observable<Employee[]>{
-    return  this.http.get<Employee[]>(`${this.apiServerUrl}/employees`);
+  public getEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.apiServerUrl}/employee/all`);
   }
 
-  public postEmployee(emp : Employee): Observable<Employee>{
-    return this.http.post<Employee>(this.apiServerUrl+"/employees",emp);
+  public addEmployee(employee: Employee): Observable<Employee> {
+    return this.http.post<Employee>(`${this.apiServerUrl}/employee/add`, employee);
   }
 
-  public updateEmployee(emp : Employee): Observable<Employee>{
-    return this.http.put<Employee>(this.apiServerUrl+"/employees",emp, {responseType: 'text' as 'json'});
+  public updateEmployee(employee: Employee): Observable<Employee> {
+    return this.http.put<Employee>(`${this.apiServerUrl}/employee/update`, employee);
   }
 
-  public deleteEmployee(id : Number): Observable<any>{
-    return this.http.delete<any>(this.apiServerUrl+"/employees/"+id, {responseType: 'text' as 'json'});
+  public deleteEmployee(employeeId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiServerUrl}/employee/delete/${employeeId}`);
   }
 
 }

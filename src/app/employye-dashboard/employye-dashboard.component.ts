@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Employee } from '../model/employee.model';
 import { EmployeeService } from '../service/employee.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { error } from '@angular/compiler/src/util';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { map, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-employye-dashboard',
@@ -18,8 +18,19 @@ export class EmployyeDashboardComponent implements OnInit {
   formValue !: FormGroup;
   public employees !: Employee[];
   employeeObj : Employee = new Employee();
+  search = new FormControl('');
 
-  constructor(private empService : EmployeeService, private formBuilder : FormBuilder){}
+  constructor(private empService : EmployeeService, private formBuilder : FormBuilder){
+    
+    this.search.valueChanges
+      .pipe(
+         debounceTime(500),
+         distinctUntilChanged(),
+      )
+      .subscribe(
+        v => this.searchEmployees(v as string)
+      );
+  }
 
   ngOnInit(){
     this.getEmployees();
@@ -64,7 +75,7 @@ export class EmployyeDashboardComponent implements OnInit {
   }
 
   postEmployee(){
-    this.empService.postEmployee(this.formValue.value)
+    this.empService.addEmployee(this.formValue.value)
     .subscribe(res=>{
       console.log(res);
       alert("Employee Added Successfully");
@@ -96,11 +107,29 @@ export class EmployyeDashboardComponent implements OnInit {
 
   onDelete(id : Number){
     if(confirm("Are you sure to delete "+id)) {
-    this.empService.deleteEmployee(id)
+    this.empService.deleteEmployee(id as number)
       .subscribe(res=>{
           alert("Employee deleted");
           this.getEmployees();
       })}
   }
 
+  public searchEmployees(key: string): void {
+    console.log(key);
+    const results: Employee[] = [];
+    for (const employee of this.employees) {
+      if (employee.name.toLowerCase().indexOf(key.toLowerCase()) !== -1
+      || employee.email.toLowerCase().indexOf(key.toLowerCase()) !== -1
+      || employee.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1
+      || employee.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
+        results.push(employee);
+      }
+    }
+    this.employees = results;
+    if (results.length === 0 || !key) {
+      this.getEmployees();
+    }
+  }
+
 }
+
